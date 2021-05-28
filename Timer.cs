@@ -1,39 +1,107 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Timer : Colider
+
+
+
+public class Timer : MonoBehaviour
 {
-    // Start is called before the first frame update
-    public GameObject player1, player2;
+
+    
+    public struct PlayerControl
+    {
+        public int LastMove, LoseCount;
+    }
+ 
     public Text timer;
     private float time = 10;
     private Vector3 witch2;
-    // Start is called before the first frame update
-    void Start()
+    public GameObject WinMessage1, WinMessage2;
+    public GameObject player1, player2;
+    public class WinRule : Colider
     {
-        witch2 = this.transform.position;
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        time -= Time.deltaTime;
-        timer.text = Mathf.Ceil(time).ToString();
-        if (Input.GetKey(KeyCode.W) && time < 5) 
+        
+        public  void Use(GameObject gameObject, int Count)
         {
-            time = 5;
+
+            if (Count == 2)
+            {
+                if (gameObject == player1)
+                {
+                    Process(WinMessage1);
+                }
+                else if (gameObject == player2)
+                {
+
+                    Process(WinMessage2);
+                }
+            }
         }
-        if (Input.GetKey(KeyCode.I) && time < 5) 
+
+        private void OnCollisionEnter2D()
+        {
+            throw new NotImplementedException();
+        }
+    }
+    void TheLateMove()
+    {
+        if (Input.GetKey(KeyCode.W) && time < 5)
         {
             time = 5;
+            p1.LastMove = 1;
+            p2.LastMove = 0;//LastMove: 마지막으로 움직인 플레이어 판별
+        }
+        if (Input.GetKey(KeyCode.I) && time < 5)
+        {
+            time = 5;
+            p2.LastMove = 1;
+            p1.LastMove = 0;
         }
         if (time < 0)
         {
             time = 7;
             player1.transform.position = new Vector3(witch2.x, witch2.y, witch2.z);
             player2.transform.position = new Vector3(witch2.x, witch2.y, witch2.z);
-        }
 
+            if (p1.LastMove == 0)
+            {
+                if (p2.LoseCount == 1) p1.LoseCount = 0;
+                p1.LoseCount++;
+            }
+            else if (p2.LastMove == 0)
+            {
+                if (p1.LoseCount == 1) p2.LoseCount = 0;
+                p2.LoseCount++;
+            }//LostCount 증감
+            else { };
+        }
+    }
+
+
+    public PlayerControl p1;
+    public PlayerControl p2;
+    
+
+    // Start is called before the first frame update
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        witch2 = this.transform.position;
+        p1.LastMove = 0;
+        p2.LastMove = 0;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        time -= Time.deltaTime;
+        timer.text = Mathf.Ceil(time).ToString();
+
+
+        TheLateMove();//타이머가 0 이하가 되면 양 플레이어의 위치 초기화, 마지막으로 움직이지 않은 플레이어에게 LoseCount +1
     }
 }

@@ -2,27 +2,34 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Colider : MonoBehaviour
+
+
+public class Colider : Timer
 {
     public GameObject player;
     public GameObject WinMessage;
-    public GameObject WinLine,QuitButton,ReStartButton;
+    public static GameObject WinLine,QuitButton,ReStartButton;
     private Vector3 witch;
     // Start is called before the first frame update
     void Start()
     {
         witch = this.transform.position;
     }
-    void OnCollisionEnter2D(Collision2D other)
+
+    public void Process(GameObject ToWin)
+    {
+        ReStartButton.SetActive(true);
+        QuitButton.SetActive(true);
+        ToWin.SetActive(true);
+        player1.SetActive(false);
+        player2.SetActive(false);
+    }
+    public void OnCollisionEnter2D(Collision2D other)
     {
         print(other.gameObject.name);
         if (WinLine.name == other.gameObject.name)
         {
-            ReStartButton.SetActive(true);
-            QuitButton.SetActive(true);
-            WinMessage.SetActive(true);
-            this.gameObject.SetActive(false);
-            player.SetActive(false);
+            Process(WinLine);
         }
         else
         {
