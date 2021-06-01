@@ -10,42 +10,44 @@ using UnityEngine.UI;
 public class Timer : MonoBehaviour
 {
 
-    
+
     public struct PlayerControl
     {
+        public GameObject player;
         public int LastMove, LoseCount;
     }
  
     public Text timer;
     private float time = 10;
     private Vector3 witch2;
-    public GameObject WinMessage1, WinMessage2;
-    public GameObject player1, player2;
-    public class WinRule : Colider
+    public  GameObject WinMessage1, WinMessage2, QuitButton, ReStartButton;
+
+    public void Process(GameObject ToWin)
     {
-        
-        public  void Use(GameObject gameObject, int Count)
+        ReStartButton.SetActive(true);
+        QuitButton.SetActive(true);
+        ToWin.SetActive(true);
+        p1.player.SetActive(false);
+        p2.player.SetActive(false);
+    }
+    public  void Use(GameObject gameObject, int Count)
+    {
+
+        if (Count == 2)
         {
-
-            if (Count == 2)
+            if (gameObject == p1.player)
             {
-                if (gameObject == player1)
-                {
-                    Process(WinMessage1);
-                }
-                else if (gameObject == player2)
-                {
+                Process(WinMessage1);
+            }
+            else if (gameObject == p2.player)
+            {
 
-                    Process(WinMessage2);
-                }
+                Process(WinMessage2);
             }
         }
-
-        private void OnCollisionEnter2D()
-        {
-            throw new NotImplementedException();
-        }
+        
     }
+
     void TheLateMove()
     {
         if (Input.GetKey(KeyCode.W) && time < 5)
@@ -63,8 +65,8 @@ public class Timer : MonoBehaviour
         if (time < 0)
         {
             time = 7;
-            player1.transform.position = new Vector3(witch2.x, witch2.y, witch2.z);
-            player2.transform.position = new Vector3(witch2.x, witch2.y, witch2.z);
+            p1.player.transform.position = new Vector3(witch2.x, witch2.y, witch2.z);
+            p2.player.transform.position = new Vector3(witch2.x, witch2.y, witch2.z);
 
             if (p1.LastMove == 0)
             {
@@ -77,6 +79,16 @@ public class Timer : MonoBehaviour
                 p2.LoseCount++;
             }//LostCount Αυ°¨
             else { };
+            print("P1 LoseCount" + p1.LoseCount);
+            print("P2 LoseCount" + p2.LoseCount);
+            if (p1.LoseCount == 2)
+            {
+                Process(WinMessage2);
+            }
+            else if(p2.LoseCount == 2)
+            {
+                Process(WinMessage1);
+            }
         }
     }
 
@@ -93,6 +105,8 @@ public class Timer : MonoBehaviour
         witch2 = this.transform.position;
         p1.LastMove = 0;
         p2.LastMove = 0;
+        p1.player = GameObject.Find("Player1");
+        p2.player = GameObject.Find("Player2");
     }
 
     // Update is called once per frame

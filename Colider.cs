@@ -4,16 +4,16 @@ using UnityEngine;
 
 
 
-public class Colider : Timer
+public class Colider : MonoBehaviour
 {
-    public GameObject player;
-    public GameObject WinMessage;
-    public static GameObject WinLine,QuitButton,ReStartButton;
+    public GameObject WinMessage,player;
+    public GameObject WinLine,QuitButton,ReStartButton, player1, player2;
     private Vector3 witch;
     // Start is called before the first frame update
     void Start()
     {
         witch = this.transform.position;
+        print(player1);
     }
 
     public void Process(GameObject ToWin)
@@ -29,7 +29,7 @@ public class Colider : Timer
         print(other.gameObject.name);
         if (WinLine.name == other.gameObject.name)
         {
-            Process(WinLine);
+            Process(WinMessage);
         }
         else
         {
